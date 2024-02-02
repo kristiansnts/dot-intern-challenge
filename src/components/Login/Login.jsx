@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const {
@@ -12,11 +13,15 @@ const Login = () => {
         resetField('password')
     }
 
+    const navigateTo = useNavigate()
+
     const onSubmit = (data) => {
         if(data.username == 'admin' && data.password == 'admin') {
             localStorage.setItem('userAdmin', data.username)
+            navigateTo('quizes')
         } else if (data.username.length !== 0 && data.password == '123456') {
             localStorage.setItem('newUser', data.username)
+            navigateTo('quizes')
         }
         reset()
     }
