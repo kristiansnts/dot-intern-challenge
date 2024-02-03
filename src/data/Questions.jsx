@@ -56,13 +56,6 @@ const Questions = () => {
 
         return () => clearTimeout(timerId)
     }, [])
-
-    const next = () => {
-        if(step === 0) {
-            return
-        }
-        setStep(prevStep => prevStep + 1)
-    }
       
     let answersArray = [
         {
@@ -110,7 +103,14 @@ const Questions = () => {
                             <span className="mr-5">Questions: <span className="font-bold text-green-700">{state.questions.length}</span></span>
                             <span>No: {step + 1}</span>
                         </div>
-                        <button className="w-20 bg-sky-500 rounded-lg px-4 py-2 font-bold text-white block ml-auto hover:bg-sky-950">Next</button>
+                        <button
+                            onClick={() => {
+                                setStep(prevStep => prevStep + 1)
+                            }}
+                            className="w-20 bg-sky-500 rounded-lg px-4 py-2 font-bold text-white block ml-auto hover:bg-sky-950"
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
         </>
