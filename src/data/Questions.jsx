@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios"
+import { decode } from "html-entities"
 import { useEffect, useReducer, useState } from "react"
 
 const initialData = {
@@ -72,7 +73,7 @@ const Questions = () => {
     if(!state.loading) {
         let triviaData = state.questions
         const result = triviaData.map(item => {
-        const shuffledAnswers = [...item.incorrect_answers, item.correct_answer].sort(() => Math.random() - 0.5);
+        const shuffledAnswers = [...item.incorrect_answers, item.correct_answer];
         
             return {
                 question: item.question,
@@ -84,13 +85,12 @@ const Questions = () => {
         answersArray = result
     }
 
-   
 
     return (
         <>
             <div className="question">
                     <div className="question-wrapper bg-white rounded-lg my-3 px-4 py-6">
-                        <p>{state.loading ? 'Loading' : state.questions[step].question}</p>
+                        <p>{state.loading ? 'Loading' : decode(state.questions[step].question, {level: 'html5'})}</p>
                     </div>
                     <div className="question-list">
                         <ul>
@@ -99,7 +99,7 @@ const Questions = () => {
                                 <li key={index + 1}>
                                     <button onClick={() => {
                                         setActiveButtonIndex(index + 1)
-                                    }} className={`cursor-pointer w-full rounded-lg px-4 py-2 my-2 ${activeButtonIndex == index + 1 ? 'bg-black text-slate-200 outline-none ring ring-white': 'bg-slate-200 '} hover:bg-black hover:text-slate-200`}>{item}</button>
+                                    }} className={`cursor-pointer w-full rounded-lg px-4 py-2 my-2 ${activeButtonIndex == index + 1 ? 'bg-black text-slate-200 outline-none ring ring-white': 'bg-slate-200 '} hover:bg-black hover:text-slate-200`}>{decode(item, {level: 'html5'})}</button>
                                 </li>
                              ))
                         }
