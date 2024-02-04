@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { TimerContext } from "../../services/TimerContext";
 
 const Timer = () => {
-    const [seconds, setSeconds] = useState(300)
-    
+    const [seconds, setSeconds] = useContext(TimerContext)
+    const navigateTo = useNavigate()
+
     useEffect(() => {
         
         if(seconds <= 0) {
-            return
+            navigateTo('/logout')
         }
 
         const timer = setInterval(() => {

@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios"
 import { decode } from "html-entities"
-import { useEffect, useReducer, useState } from "react"
+import { useContext, useEffect, useReducer, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { TimerContext } from "../services/TimerContext"
 
 const initialData = {
     loading: true,
@@ -32,11 +34,20 @@ const Questions = () => {
     const [state, dispatch] = useReducer(reducer, initialData)
     const [activeButtonIndex, setActiveButtonIndex] = useState(0)
     const [step, setStep] = useState(0)
+    const [score, setScore] = useState(0)
+    const [seconds, setSeconds] = useContext(TimerContext)
+    const navigateTo = useNavigate()
 
+    // If last user
+    const savedUser = JSON.parse(localStorage.getItem('userScore')) || null
+    let quizQuestion = savedUser.questions || state.questions   
+ 
+    // API CALLS
     useEffect(() => {
+
         const fetchData = async () => {
             try {
-                const response = await axios.get('https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple')
+                const response = await axios.get('https://opentdb.com/api.php?amount=8&category=19&difficulty=easy&type=multiple')
                 dispatch({
                     type: 'FETCH_SUCCESS',
                     payload: response.data.results,
@@ -57,6 +68,19 @@ const Questions = () => {
         return () => clearTimeout(timerId)
     }, [])
       
+    useEffect(() => {
+        const handleTabClose = event => {
+            event.preventDefault()
+
+            localStorage.setItem('lastTime', seconds)
+        }
+        window.addEventListener('beforeunload', handleTabClose)
+
+        return () => {
+            window.removeEventListener('beforeunload', handleTabClose)
+        }
+    })
+
     let answersArray = [
         {
             answers: ["loading", "loading", "loading", "loading"]
@@ -64,7 +88,7 @@ const Questions = () => {
     ]
 
     if(!state.loading) {
-        let triviaData = state.questions
+        let triviaData = quizQuestion
         const result = triviaData.map(item => {
         const shuffledAnswers = [...item.incorrect_answers, item.correct_answer];
         
@@ -78,12 +102,35 @@ const Questions = () => {
         answersArray = result
     }
 
+    const handleNext = () => {
+        const answerIndex = activeButtonIndex - 1
+        const isCorrect = answersArray[step].correctAnswer == answersArray[step].answers[answerIndex]
+       
+        setScore(prevScore => (isCorrect ? prevScore + 1 : prevScore))
+        setActiveButtonIndex(0)
+
+        const finalScore = score + (isCorrect ? 1 : 0)
+        const scoreInfo = {
+            rightScore: finalScore,
+            wrongScore: (step + 1) - finalScore,
+            totalAnswer: step + 1,
+            totalQuestion: quizQuestion.length,
+            questions: quizQuestion,
+            savedStep: step,
+            lastSeconds: seconds
+        }
+        localStorage.setItem('userScore', JSON.stringify(scoreInfo))
+        if(step + 1 == quizQuestion.length){
+           navigateTo('/logout')
+        }
+        setStep(prevStep => prevStep + 1)
+    }
 
     return (
         <>
             <div className="question">
                     <div className="question-wrapper bg-white rounded-lg my-3 px-4 py-6">
-                        <p>{state.loading ? 'Loading' : decode(state.questions[step].question, {level: 'html5'})}</p>
+                        <p>{state.loading ? 'Loading' : decode(quizQuestion[step].question, {level: 'html5'})}</p>
                     </div>
                     <div className="question-list">
                         <ul>
@@ -100,16 +147,14 @@ const Questions = () => {
                     </div>
                     <div className="action flex">
                         <div className="text-white">
-                            <span className="mr-5">Questions: <span className="font-bold text-green-700">{state.questions.length}</span></span>
+                            <span className="mr-5">Questions: <span className="font-bold text-green-700">{quizQuestion.length}</span></span>
                             <span>No: {step + 1}</span>
                         </div>
                         <button
-                            onClick={() => {
-                                setStep(prevStep => prevStep + 1)
-                            }}
+                            onClick={handleNext}
                             className="w-20 bg-sky-500 rounded-lg px-4 py-2 font-bold text-white block ml-auto hover:bg-sky-950"
                         >
-                            Next
+                            {step + 1 == quizQuestion.length ? 'Submit' : 'Next'}
                         </button>
                     </div>
                 </div>
