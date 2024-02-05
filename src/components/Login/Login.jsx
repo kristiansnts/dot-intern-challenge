@@ -43,6 +43,7 @@ const Login = () => {
                         placeholder="Password" 
                         {...register("password")}
                     />
+                    <p className="text-sm mb-2"> Username: random username, pass: 123456</p>
                     <button type="submit" className="w-1/2 p-2 bg-white hover:bg-black hover:text-white">Sign in</button>
                 </form>
             </div>
