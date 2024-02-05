@@ -1,7 +1,14 @@
+import { useNavigate } from "react-router-dom"
+
 const FinalScore = () => {
     const userScore = localStorage.getItem('userScore') ? JSON.parse(localStorage.getItem('userScore')) : ""
-
     const titleMessage = (userScore) ? (userScore.totalAnswer < userScore.totalQuestion ? 'Time out!! Your Score is :' : 'Conratulation, you have answered all the questions. Your Score is :') : ""
+    const navigateTo = useNavigate()
+
+    const handleLogOut = () => {
+        localStorage.clear()
+        navigateTo('/')
+    }
 
     return ( 
         <>
@@ -17,7 +24,12 @@ const FinalScore = () => {
                         </ul>
                     </div>
                 </div>
-                <button className="w-full bg-white px-4 py-2 rounded-lg hover:bg-red-700 hover:text-white hover:font-bold">Log out</button>
+                <button 
+                    className="w-full bg-white px-4 py-2 rounded-lg hover:bg-red-700 hover:text-white hover:font-bold"
+                    onClick={handleLogOut}
+                >
+                Log out
+                </button>
             </div>
         </>
      );
