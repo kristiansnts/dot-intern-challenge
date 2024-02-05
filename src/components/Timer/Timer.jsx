@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { TimerContext } from "../../services/TimerContext";
 
@@ -7,6 +7,7 @@ const Timer = () => {
     const [seconds, setSeconds] = useContext(TimerContext)
     const navigateTo = useNavigate()
 
+    
     useEffect(() => {
         
         if(seconds <= 0) {
@@ -17,17 +18,28 @@ const Timer = () => {
             setSeconds(prevSecond => prevSecond - 1)
         }, 1000)
 
-        return () => clearInterval(timer)
-    }, [seconds])
+        const handleTabClose = event => {
+            event.preventDefault()
 
-    const formatTime = (inSeconds) => {
+            localStorage.setItem('lastTime', seconds)
+        }
+        window.addEventListener('beforeunload', handleTabClose)
+
+        return () => {
+            clearInterval(timer)
+            window.removeEventListener('beforeunload', handleTabClose)
+        }
+    }, [seconds])
+    
+
+    const formatTime = useMemo(() => (inSeconds) => {
         const minutes = Math.floor(inSeconds / 60)
                             .toString()
                             .padStart(2, '0')
 
         const seconds = (inSeconds % 60).toString().padStart(2, '0')
         return `${minutes}:${seconds}`
-    }
+    }, [])
 
     return ( 
         <>
