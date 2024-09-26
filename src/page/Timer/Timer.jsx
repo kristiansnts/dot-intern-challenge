@@ -11,7 +11,7 @@ const Timer = () => {
     useEffect(() => {
         
         if(seconds <= 0) {
-            navigateTo('/logout')
+            navigateTo('/result')
         }
 
         const timer = setInterval(() => {

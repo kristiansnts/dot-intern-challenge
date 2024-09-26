@@ -1,17 +1,19 @@
-import FinalScore from './components/FinalScore/FinalScore'
-import Login from './components/Login/Login'
-import Quizes from './components/Quiz/Quizes'
+import FinalScore from './page/FinalScore/FinalScore'
+import Login from './page/Login/LoginPage'
+import PortalPage from './page/Portal/PortalPage'
+import Quizes from './page/Quiz/Quizes'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 function App() {
   return (
-    <main className='flex h-screen w-full justify-center items-center'>
+    <main className=''>
       <BrowserRouter>
         <Routes>
           <Route path="/" >
-              <Route index element={<Login />} />
+              <Route index element={<PortalPage />} />
+              <Route path="login" element={<Login />} />
               <Route path="quizes" element={<Quizes />} />
-              <Route path="logout" element={<FinalScore />}/>
+              <Route path="result" element={<FinalScore />}/>
           </Route>  
         </Routes>  
       </BrowserRouter>

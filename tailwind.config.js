@@ -6,6 +6,12 @@ export default {
   ],
   theme: {
     extend: {},
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '15px'
+      },
+    }
   },
   plugins: [],
 }
